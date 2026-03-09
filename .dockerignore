@@ -1,0 +1,8 @@
+.git
+src/app/vendor
+src/app/node_modules
+src/app/storage/logs
+src/app/storage/framework/cache
+src/app/storage/framework/sessions
+src/app/storage/framework/views
+src/app/.env
