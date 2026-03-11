@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified'])->name('user.')->group(function () {
 
     // User Dashboard
     Route::get('/dashboard', [User\DashboardController::class, 'index'])->name('dashboard');
@@ -22,18 +22,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('programs')->name('programs.')->group(function () {
         Route::get('/', [User\ProgramCatalogController::class, 'index'])->name('index');
         Route::get('/{program}', [User\ProgramCatalogController::class, 'show'])->name('show');
-        Route::get('/{program}/packages', [User\ProgramCatalogController::class, 'packages'])->name('packages');
-        Route::get('/{program}/tests', [User\ProgramCatalogController::class, 'tests'])->name('tests');
+        Route::get('/packages/{package}', [User\ProgramCatalogController::class, 'showPackage'])->name('packages.show');
+        Route::get('/tests/{test}', [User\ProgramCatalogController::class, 'showTest'])->name('tests.show');
     });
 
     // Subscription & Payment
     Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
         Route::get('/plans', [User\SubscriptionController::class, 'plans'])->name('plans');
         Route::get('/checkout/{plan}', [User\SubscriptionController::class, 'checkout'])->name('checkout');
-        Route::post('/subscribe', [User\SubscriptionController::class, 'subscribe'])->name('subscribe');
-        Route::post('/payment/{subscription}', [User\SubscriptionController::class, 'processPayment'])->name('payment');
+        Route::post('/subscribe/{plan}', [User\SubscriptionController::class, 'subscribe'])->name('subscribe');
+        Route::get('/payment/{payment}', [User\SubscriptionController::class, 'payment'])->name('payment');
         Route::get('/history', [User\SubscriptionController::class, 'history'])->name('history');
-        Route::get('/invoices/{payment}', [User\SubscriptionController::class, 'invoice'])->name('invoices');
+        Route::get('/invoices', [User\SubscriptionController::class, 'invoices'])->name('invoices');
     });
 
     // Generic Test Engine
@@ -47,7 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // DISC Test Engine
     Route::prefix('disc')->name('disc.')->group(function () {
-        Route::post('/{form}/start', [User\DiscTestController::class, 'start'])->name('start');
+        Route::post('/{test}/start', [User\DiscTestController::class, 'start'])->name('start');
         Route::get('/take/{attempt}', [User\DiscTestController::class, 'take'])->name('take');
         Route::post('/take/{attempt}/answer', [User\DiscTestController::class, 'saveAnswer'])->name('save-answer');
         Route::post('/take/{attempt}/submit', [User\DiscTestController::class, 'submit'])->name('submit');
@@ -56,7 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // IST Test Engine
     Route::prefix('ist')->name('ist.')->group(function () {
-        Route::post('/{form}/start', [User\IstTestController::class, 'start'])->name('start');
+        Route::post('/{test}/start', [User\IstTestController::class, 'start'])->name('start');
         Route::get('/take/{attempt}', [User\IstTestController::class, 'take'])->name('take');
         Route::post('/take/{attempt}/answer', [User\IstTestController::class, 'saveAnswer'])->name('save-answer');
         Route::post('/take/{attempt}/submit-subtest', [User\IstTestController::class, 'submitSubtest'])->name('submit-subtest');
@@ -66,7 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Kraepelin Test Engine
     Route::prefix('kraepelin')->name('kraepelin.')->group(function () {
-        Route::post('/{form}/start', [User\KraepelinTestController::class, 'start'])->name('start');
+        Route::post('/{test}/start', [User\KraepelinTestController::class, 'start'])->name('start');
         Route::get('/take/{attempt}', [User\KraepelinTestController::class, 'take'])->name('take');
         Route::post('/take/{attempt}/answer', [User\KraepelinTestController::class, 'saveAnswer'])->name('save-answer');
         Route::post('/take/{attempt}/batch-answer', [User\KraepelinTestController::class, 'saveBatchAnswers'])->name('batch-answer');
@@ -76,7 +76,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Psychotest Engine
     Route::prefix('psychotest')->name('psychotest.')->group(function () {
-        Route::post('/{form}/start', [User\PsychotestTestController::class, 'start'])->name('start');
+        Route::post('/{test}/start', [User\PsychotestTestController::class, 'start'])->name('start');
         Route::get('/take/{attempt}', [User\PsychotestTestController::class, 'take'])->name('take');
         Route::post('/take/{attempt}/answer', [User\PsychotestTestController::class, 'saveAnswer'])->name('save-answer');
         Route::post('/take/{attempt}/submit', [User\PsychotestTestController::class, 'submit'])->name('submit');
@@ -92,9 +92,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // History & Progress
     Route::prefix('history')->name('history.')->group(function () {
-        Route::get('/', [User\HistoryController::class, 'index'])->name('index');
-        Route::get('/{attempt}', [User\HistoryController::class, 'show'])->name('show');
+        Route::get('/', [User\HistoryController::class, 'attempts'])->name('index');
         Route::get('/progress', [User\HistoryController::class, 'progress'])->name('progress');
+        Route::get('/results', [User\HistoryController::class, 'results'])->name('results');
+        Route::get('/{attempt}', [User\HistoryController::class, 'attempts'])->name('show');
     });
 
     // User Profile
