@@ -33,4 +33,4 @@ RUN apt-get update && apt-get install -y \
 
 EXPOSE 9000
 
-CMD ["php-fpm"]
+CMD ["sh", "-lc", "mkdir -p /var/www/html/app/storage/framework/views /var/www/html/app/storage/framework/cache/data /var/www/html/app/storage/framework/sessions /var/www/html/app/storage/logs /var/www/html/app/bootstrap/cache && chmod -R 0777 /var/www/html/app/storage /var/www/html/app/bootstrap/cache && php-fpm"]
